@@ -64,7 +64,7 @@
     margin:6px 0 0;
     color:var(--ink-soft);
     font-size:14px;
-    max-width:60ch;
+    max-width:90ch;
   }
   .lgu-field{
     display:flex;
@@ -307,13 +307,6 @@
         <li><strong>C: Regressing</strong> — <strong>Conditions or indicators have deteriorated</strong> relative to previous baselines, requiring urgent policy intervention or reallocated funding</li>
       </ul>
     </div>
-    <div class="toolbar-actions">
-      <button class="reset-btn" id="saveBtn">Download flle</button>
-      <button class="reset-btn" id="loadBtn">Upload existing file</button>
-      <input type="file" id="loadFile" accept="application/json" style="display:none" />
-      <button class="reset-btn" id="downloadImgBtn">Download the diagram (PNG)</button>
-      <button class="reset-btn" id="resetBtn">Reset</button>
-    </div>
   </div>
 
   <main class="layout">
@@ -332,6 +325,14 @@
 
     <div class="dimensions" id="dimensionsRoot"></div>
   </main>
+
+  <div class="toolbar-actions">
+    <button class="reset-btn" id="saveBtn">Download flle</button>
+    <button class="reset-btn" id="loadBtn">Upload existing file</button>
+    <input type="file" id="loadFile" accept="application/json" style="display:none" />
+    <button class="reset-btn" id="downloadImgBtn">Download the diagram (PNG)</button>
+    <button class="reset-btn" id="resetBtn">Reset</button>
+  </div>
 
   <footer class="note">
      Quezon City Planning and Development Department - Special Projects Division
@@ -610,6 +611,13 @@
     return (str||'audit').toLowerCase().trim().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'') || 'audit';
   }
 
+  // Keeps the typed division/group name readable in the downloaded filename
+  // (preserves case and spacing as underscores) instead of collapsing it to a slug.
+  function toFileName(str){
+    const cleaned = (str||'').trim().replace(/[\\/:*?"<>|]+/g,'').replace(/\s+/g,'_');
+    return cleaned || 'audit';
+  }
+
   document.getElementById('resetBtn').addEventListener('click', () => {
     DIMENSIONS.forEach(d => { state[d.id] = new Array(5).fill(null); });
     document.querySelectorAll('.toggle').forEach(t => refreshToggle(t, null));
@@ -628,7 +636,7 @@
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = slugify(payload.lgu) + '-audit-ratings.json';
+    a.download = toFileName(payload.lgu) + '_audit_ratings.json';
     document.body.appendChild(a);
     a.click();
     a.remove();
@@ -685,7 +693,7 @@
       canvas.toBlob((blob) => {
         const a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
-        a.download = slugify(document.getElementById('lguName').value) + '-audit-diagram.png';
+        a.download = toFileName(document.getElementById('lguName').value) + '_audit_diagram.png';
         document.body.appendChild(a);
         a.click();
         a.remove();
