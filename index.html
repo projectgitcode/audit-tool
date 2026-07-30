@@ -300,77 +300,53 @@
 
   const DIMENSIONS = [
     {
-      id: 'acc', label: 'Pillar 1: PEOPLE', index: 0,
+      id: 'acc', label: 'PEOPLE', index: 0,
       questions: [
         { en: 'Expanding social protection coverage, reducing multi-dimensional poverty, and strengthening economic support systems for poor and vulnerable households.'},
-        { en: 'Legible environmental signages/notices are available in our community parks and open spaces that guide the users.',
-          tl: 'Mayroong mga malinaw na palatandaan/patalastas sa aming community parks at open spaces na gumagabay sa mga taong gumagamit nito.' },
-        { en: 'Benches, comfort rooms and other usable facilities and amenities are available in our parks and public open spaces.',
-          tl: 'Mayroong mga pasilidad tulad ng mga upuan at malapit na palikuran sa aming parks at open spaces.' },
-        { en: 'There are open spaces allocated for planting native trees and other plants such as medicinal herbs and fruit-bearing trees.',
-          tl: 'Mayroong open spaces sa aming lugar na inilaan para sa pagtatanim ng native trees at iba pang puno at halaman, tulad ng mga halamang gamot at mga namumunga ng mga prutas at gulay.' },
-        { en: 'Parks and open spaces in our locality are accessible to all ages and abilities (children & youth, senior citizens, PWDs), with safe streets and good pedestrian amenities.',
-          tl: 'Madali ma-akses ng lahat edad at kakayahan (mga bata at kabataan, senior citizens, PWDs) ang mga parks at open spaces sa aming lugar.' }
+        { en: 'Ensuring equitable access to quality healthcare services, disease prevention, reproductive health, mental health support, and community wellness programs across all ages.'},
+        { en: 'Delivering accessible, inclusive, and equitable public education, early childhood care, technical- vocational training, and lifelong learning opportunities.'},
+        { en: 'Eliminating gender-based discrimination and violence, empowering women and girls, and ensuring gender-responsive local planning and leadership.'},
+        { en: 'Providing safe, affordable, and socialized housing, securing land tenure, preventing unjust displacement, and expanding access to basic utilities and safe social spaces.'}
       ]
     },
     {
-      id: 'cea', label: 'Comfort & Aesthetics', index: 1,
+      id: 'cea', label: 'PLANET', index: 1,
       questions: [
-        { en: 'Open spaces in our locality incorporate green and blue landscapes (native trees, flowers, shrubs, lawns, gardens; and natural water features such as rivers, creeks, ponds).',
-          tl: 'Maganda at kaaya-aya ang mga parks at open spaces sa aming lugar. Mayroon itong mga native na puno at bulaklak at mga katubigan tulad ng sapa, lawa, at iba pa.' },
-        { en: 'Our parks and public open spaces are well-managed and maintained, attracting various users and generating community pride.',
-          tl: 'Mahusay na napapanatili ang kalinisan at kagandahan ng mga parks at open spaces sa aming lugar. Pinagmamalaki ang mga ito ng aming komunidad.' },
-        { en: 'Our parks and open spaces are peaceful and serene, with low ambient noise and buffer trees/planting for noise reduction.',
-          tl: 'Tahimik at payapa ang parks at open spaces sa aming lugar. Malayo ito sa ingay ng mga kalsada at gusali.' },
-        { en: 'Natural shade and cooling are present in the parks and open spaces in our locality.',
-          tl: 'Malilim at presko ang hangin sa mga parks at open spaces sa aming lugar.' },
-        { en: 'There are no visual obstructions from surrounding structures, areas, and land uses.',
-          tl: 'Maaliwalas ang mga parks at open spaces sa aming munisipyo. Walang mga di kaaya-ayang gusali na kalapit ito.' }
+        { en: 'Local water conservation, expansion of clean water access, proper septage/wastewater management, and the protection and cleanup of local rivers, creeks, and urban waterways.'},
+        { en: 'Sustainable green building standards, expanding pedestrian pathways and active mobility networks, increasing accessible green parks, and developing disaster-resilient communities.' },
+        { en: 'Reducing single-use plastics, enforcing solid waste segregation and composting, and promoting waste reduction, recycling, and re-use practices across households and local businesses.' },
+        { en: 'Implementing local climate adaptation and mitigation plans, reducing carbon emissions, adopting renewable energy sources in public and residential spaces, and strengthening community disaster preparedness.' },
+        { en: 'Urban biodiversity preservation, expanding urban agriculture and community gardens, planting native trees, and protecting local natural open spaces and green corridors.' }
       ]
     },
     {
-      id: 'pss', label: 'Public Safety & Security', index: 2,
+      id: 'pss', label: 'PROSPERITY', index: 2,
       questions: [
-        { en: 'There are measures in place for environmental surveillance to ensure the safety of users of parks and open spaces.',
-          tl: 'Mayroong mga pamamaraan para magsubaybay at siguraduhin ang kaligtasan ng mga taong pumunta sa parks at open spaces sa aming lugar.' },
-        { en: 'It is safe to access and use open spaces at any time of day because streetlights are present in the area.',
-          tl: 'Ligtas ang pumunta at gumamit ng open spaces anumang oras ng araw at gabi dahil mayroong probisyon ng ilaw.' },
-        { en: 'The open space has procedures in place to deter crime, with public security officers or local police present.',
-          tl: 'Mayroong pamamaraan sa mga pampublikong parks at open spaces laban sa krimen. May mga tagabantay dito (tulad ng tanod, guwardya, o pulis) na sumisiguro sa kaligtasan ng mga tao.' },
-        { en: 'The open space has traffic-calming measures for pedestrian safety, with designated parking slots and visible traffic signage.',
-          tl: 'Ang open spaces sa aming lugar ay may mga hakbang iwas trapiko para sa kaligtasan ng mga pedestrian.' },
-        { en: 'The open space is highly accessible to emergency services, such as temporary evacuation and fire assembly areas after disasters.',
-          tl: 'Madaling ma-akses ang parks at open spaces tuwing may sakuna (lindol, bagyo, baha, sunog). Nagagamit din ito bilang temporary evacuation at fire assembly area.' }
+        { en: 'Expanding local job opportunities, supporting micro, small, and medium enterprises (MSMEs), ensuring fair wages, and promoting safe, formal work conditions for all citizens.'},
+        { en: 'Expanding reliable, affordable, and clean energy access to power local businesses, public markets, commercial corridors, and community economic spaces.'},
+        { en: 'Building resilient physical infrastructure, expanding digital access and digital literacy, supporting local industries, and integrating technology into economic services.'},
+        { en: 'Fostering well-connected local commercial hubs, accessible public markets, active mobility options for workers and consumers, and sustainable urban economic spaces.'},
+        { en: 'Transitioning local enterprises toward sustainable practices, creating green jobs, and providing skills training aligned with emerging digital and sustainable economic sectors.'}
       ]
     },
     {
-      id: 'wr', label: 'Wellness & Recreation', index: 3,
+      id: 'wr', label: 'PEACE', index: 3,
       questions: [
-        { en: 'Parks and open spaces in our locality provide access to the natural environment.',
-          tl: 'Nagbibigay ng akses sa likas na kapaligiran ang parks at open spaces sa aming lugar.' },
-        { en: 'There are community parks, gardens, vegetation areas, and other types of public open spaces in our locality.',
-          tl: 'Mayroong community parks, gardens, at pampublikong open spaces sa aming munisipyo/siyudad.' },
-        { en: 'Recreational and sports facilities and equipment (playgrounds, wellness facilities) are present, encouraging social interaction and healthy lifestyles.',
-          tl: "Ang parks at open spaces sa aming lugar ay may mga palaruan, pasilidad at kagamitan pang ehersisyo at isports. Nagsisilbi ding lugar ito para sa iba't ibang libangan para sa ugnayan at pagsulong ng isang malusog na komunidad." },
-        { en: 'Bike lanes and walking paths for cyclists and pedestrians are integrated with public open spaces and community parks.',
-          tl: 'Mayroong mga lakaran at pasilidad para sa mga pedestrian at siklista.' },
-        { en: 'The public open spaces in our locality have multiple uses and can host community events such as trade fairs, bazaars, and celebrations.',
-          tl: 'Ang mga parks at open spaces sa aming lugar ay nagagamit para sa mga aktibidad at kaganapang pang-komunidad.' }
+        { en: 'Reducing local crime, preventing violence in all forms, protecting vulnerable groups from abuse, and fostering safe, peaceful neighborhoods.'},
+        { en: 'Expanding fair, accessible, and timely justice mechanisms, including community-level dispute resolution systems and legal aid for underprivileged residents.'},
+        { en: 'Upholding high standards of public integrity, combating corruption, enforcing open-data transparency, and maintaining accountability in local governance.' },
+        { en: 'Fostering participatory decision-making processes, ensuring representation of civil society, marginalized groups, and citizens in local policy formulation.'},
+        { en: 'Safeguarding human rights, protecting fundamental freedoms, and ensuring universal legal identity rights (such as birth registration and civil status records) for all citizens.'}
       ]
     },
     {
-      id: 'ntb', label: 'Native Trees & Biodiversity', index: 4,
+      id: 'ntb', label: 'PARTNERSHIPS', index: 4,
       questions: [
-        { en: 'Native tree species (indigenous to the locality) are prioritized in planting programs within open spaces, rather than exotic or purely ornamental species.',
-          tl: 'Ang mga katutubong (native) na puno ay inuuna sa mga planting program sa aming open spaces, kaysa sa mga banyagang species.' },
-        { en: 'There is a monitoring and maintenance system in place to ensure the survival and growth of planted native trees (e.g. watering schedules, replacement of dead seedlings, pest control).',
-          tl: 'Mayroong sistema ng pagsubaybay at pangangalaga upang matiyak ang paglago ng mga itinanim na puno, tulad ng regular na pagdilig at pagpapalit ng mga namatay na punla.' },
-        { en: 'Open spaces support biodiversity by serving as habitat corridors connected to other green areas, water bodies, or forest patches in the locality.',
-          tl: "Ang mga open spaces ay tumutulong sa biodiversity sa pamamagitan ng pagkonekta sa ibang berdeng lugar, katubigan, o gubat sa aming lokalidad." },
-        { en: 'There are local policies or ordinances that protect existing mature or heritage trees and regulate tree-cutting or land conversion within open spaces.',
-          tl: 'Mayroong lokal na patakaran o ordinansa na nagpoprotekta sa mga matatandang puno at nagbabawal sa hindi pinahintulutang pagputol ng puno.' },
-        { en: 'The community and local institutions (schools, barangays, civic groups) are actively engaged in tree-planting, tree adoption, or stewardship programs for native trees.',
-          tl: 'Ang komunidad at lokal na institusyon (paaralan, barangay, civic groups) ay aktibong lahok sa mga programa ng pagtatanim at pag-aalaga ng katutubong puno.' }
+        { en: 'Fostering strong local partnerships between the local government, private sector, non-government organizations, and civil society groups to drive sustainable development initiatives.'},
+        { en: 'Securing and effectively managing local, national, and international financial resources, grants, and investments to fund community-level development projects.'},
+        { en: 'Building local institutional capacities, sharing technological tools, and collaborating with academic and research institutions for local innovation and skill development.'},
+        { en: 'Aligning local, barangay, and city-wide development plans with national and global sustainability goals to ensure seamless implementation and policy integration.'},
+        { en: 'Building robust local data collection systems, enhancing statistical capacity, and enabling transparent, multi-sectoral monitoring and reporting of progress toward the SDGs and local development vision & goals.'}
       ]
     }
   ];
