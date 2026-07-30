@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Open Spaces &amp; Native Trees Planning Audit Tool</title>
+<style>
+  :root{
+    --paper: #F6F4EC;
+    --paper-2: #EFECE0;
+    --ink: #1E2A22;
+    --ink-soft: #4B5A4F;
+    --forest: #1F5C3E;
+    --forest-deep: #123D28;
+    --line: #C9C3AE;
+    --green: #2E9E4F;
+    --green-ink: #ffffff;
+    --yellow: #F0BF2C;
+    --yellow-ink: #3a2e05;
+    --red: #DE4B45;
+    --red-ink: #ffffff;
+    --unrated: #DEDBCC;
+    --unrated-ink: #7a7562;
+    --radius: 10px;
+  }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; }
+  body{
+    background: var(--paper);
+    color: var(--ink);
+    font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height:1.45;
+  }
+  .app{
+    max-width:1240px;
+    margin:0 auto;
+    padding:28px 20px 60px;
+  }
+  header.top{
+    display:flex;
+    flex-wrap:wrap;
+    align-items:flex-end;
+    justify-content:space-between;
+    gap:18px;
+    border-bottom:3px solid var(--forest-deep);
+    padding-bottom:18px;
+    margin-bottom:26px;
+  }
+  .brand-eyebrow{
+    text-transform:uppercase;
+    letter-spacing:.14em;
+    font-size:11.5px;
+    font-weight:700;
+    color:var(--forest);
+    margin:0 0 4px;
+  }
+  h1{
+    font-size:26px;
+    margin:0;
+    letter-spacing:-0.01em;
+    color:var(--forest-deep);
+  }
+  .subtitle{
+    margin:6px 0 0;
+    color:var(--ink-soft);
+    font-size:14px;
+    max-width:60ch;
+  }
+  .lgu-field{
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+    min-width:260px;
+  }
+  .lgu-field label{
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:.08em;
+    color:var(--ink-soft);
+    font-weight:700;
+  }
+  .lgu-field input{
+    font-size:15px;
+    padding:9px 11px;
+    border:1.5px solid var(--line);
+    border-radius:8px;
+    background:#fff;
+    color:var(--ink);
+    font-family:inherit;
+  }
+  .lgu-field input:focus{ outline:2px solid var(--forest); outline-offset:1px; }
+
+  @media (max-width:480px){
+    h1{ font-size:21px; }
+    .lgu-field{ min-width:0; width:100%; }
+    .app{ padding:18px 14px 44px; }
+  }
+
+  main.layout{
+    display:grid;
+    grid-template-columns: 480px 1fr;
+    gap:34px;
+    align-items:start;
+  }
+
+  .diagram-card{
+    position:sticky;
+    top:20px;
+    background:#fff;
+    border:1.5px solid var(--line);
+    border-radius:var(--radius);
+    padding:22px 20px 18px;
+  }
+  .diagram-wrap{ width:100%; max-width:440px; margin:0 auto; }
+  .legend{
+    display:flex;
+    gap:16px;
+    justify-content:center;
+    margin-top:14px;
+    flex-wrap:wrap;
+  }
+  .legend-item{
+    display:flex; align-items:center; gap:7px;
+    font-size:12.5px; color:var(--ink-soft);
+  }
+  .legend-swatch{
+    width:13px; height:13px; border-radius:3px; border:1px solid rgba(0,0,0,.15);
+  }
+  .score-summary{
+    margin-top:16px;
+    border-top:1px solid var(--line);
+    padding-top:14px;
+  }
+  .score-row{
+    display:flex; align-items:center; gap:10px;
+    font-size:12.5px; margin-bottom:7px;
+  }
+  .score-row .dim-name{ width:170px; flex-shrink:0; color:var(--ink-soft); font-weight:600;}
+  .score-bar{
+    flex:1; height:9px; border-radius:5px; overflow:hidden; display:flex; background:var(--unrated);
+  }
+  .score-bar span{ height:100%; }
+
+  section.dimension{
+    background:#fff;
+    border:1.5px solid var(--line);
+    border-radius:var(--radius);
+    margin-bottom:18px;
+    overflow:hidden;
+  }
+  .dim-header{
+    display:flex; align-items:center; gap:10px;
+    padding:14px 18px;
+    background:var(--forest-deep);
+    color:#fff;
+  }
+  .dim-header .swatch{
+    width:10px; height:26px; border-radius:3px; flex-shrink:0;
+  }
+  .dim-header h2{
+    font-size:15.5px;
+    margin:0;
+    letter-spacing:.02em;
+    text-transform:uppercase;
+  }
+  .dim-header .dim-side{
+    margin-left:auto;
+    font-size:11px;
+    opacity:.75;
+    text-transform:uppercase;
+    letter-spacing:.08em;
+  }
+  .question{
+    padding:14px 18px;
+    border-top:1px solid var(--paper-2);
+    display:grid;
+    grid-template-columns: 1fr 156px;
+    gap:16px;
+    align-items:start;
+  }
+  @media (max-width: 960px){
+    main.layout{ grid-template-columns: 1fr; }
+    .diagram-card{ position: static !important; top: auto; }
+  }
+
+  @media (max-width:640px){
+    .question{ grid-template-columns:1fr; }
+    .toggle{ height:44px; }
+    .toggle button{ font-size:15px; }
+  }
+  .q-text{ font-size:14px; }
+  .q-text .num{ font-weight:700; color:var(--forest); margin-right:6px; }
+  .q-text .tl{ display:block; font-style:italic; color:var(--ink-soft); font-size:12.5px; margin-top:4px; }
+  .toggle{
+    display:flex;
+    border:1.5px solid var(--line);
+    border-radius:8px;
+    overflow:hidden;
+    height:34px;
+  }
+  .toggle button{
+    flex:1;
+    border:none;
+    background:#fff;
+    color:var(--ink-soft);
+    font-weight:700;
+    font-size:13px;
+    cursor:pointer;
+    font-family:inherit;
+    border-left:1px solid var(--line);
+  }
+  .toggle button:first-child{ border-left:none; }
+  .toggle button:hover{ background:var(--paper-2); }
+  .toggle button.sel-A{ background:var(--green); color:var(--green-ink); }
+  .toggle button.sel-B{ background:var(--yellow); color:var(--yellow-ink); }
+  .toggle button.sel-C{ background:var(--red); color:var(--red-ink); }
+
+  .toolbar{
+    display:flex; justify-content:space-between; align-items:center;
+    margin:4px 0 18px;
+    flex-wrap:wrap; gap:10px;
+  }
+  .toolbar .hint{ font-size:12.5px; color:var(--ink-soft); }
+  .reset-btn{
+    background:none;
+    border:1.5px solid var(--forest);
+    color:var(--forest);
+    font-weight:700;
+    font-size:12.5px;
+    padding:8px 14px;
+    border-radius:7px;
+    cursor:pointer;
+    font-family:inherit;
+  }
+  .reset-btn:hover{ background:var(--forest); color:#fff; }
+
+  footer.note{
+    margin-top:26px;
+    font-size:12px;
+    color:var(--ink-soft);
+    border-top:1px solid var(--line);
+    padding-top:14px;
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header class="top">
+    <div>
+      <p class="brand-eyebrow">AFA 2 &middot; Open Spaces &amp; Native Trees Planning</p>
+      <h1>Open Spaces Audit Tool &mdash; 5 Pillars</h1>
+      <p class="subtitle">Rate each of the 25 criteria A / B / C below. The pentagon diagram on the left fills in green, yellow, or red in real time as you go.</p>
+    </div>
+    <div class="lgu-field">
+      <label for="lguName">Name of LGU / Agency</label>
+      <input id="lguName" type="text" placeholder="e.g. Municipality of Tarlac" />
+    </div>
+  </header>
+
+  <div class="toolbar">
+    <span class="hint">A = in place &nbsp;&bull;&nbsp; B = in the pipeline &nbsp;&bull;&nbsp; C = not in place</span>
+    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+      <button class="reset-btn" id="saveBtn">Save ratings</button>
+      <button class="reset-btn" id="loadBtn">Load ratings</button>
+      <input type="file" id="loadFile" accept="application/json" style="display:none" />
+      <button class="reset-btn" id="downloadImgBtn">Download diagram (PNG)</button>
+      <button class="reset-btn" id="resetBtn">Reset all ratings</button>
+    </div>
+  </div>
+
+  <main class="layout">
+    <div class="diagram-card">
+      <div class="diagram-wrap">
+        <svg id="diagramSvg" viewBox="0 0 620 620" xmlns="http://www.w3.org/2000/svg"></svg>
+      </div>
+      <div class="legend">
+        <div class="legend-item"><span class="legend-swatch" style="background:var(--green)"></span>A &mdash; in place</div>
+        <div class="legend-item"><span class="legend-swatch" style="background:var(--yellow)"></span>B &mdash; pipeline</div>
+        <div class="legend-item"><span class="legend-swatch" style="background:var(--red)"></span>C &mdash; not in place</div>
+        <div class="legend-item"><span class="legend-swatch" style="background:var(--unrated)"></span>Unrated</div>
+      </div>
+      <div class="score-summary" id="scoreSummary"></div>
+    </div>
+
+    <div class="dimensions" id="dimensionsRoot"></div>
+  </main>
+
+  <footer class="note">
+    Built from the Open Spaces &amp; Native Trees Planning Audit Tool (Tarlac), extended to 5 pillars with a dedicated Native Trees &amp; Biodiversity dimension. Selections are kept only in this browser tab &mdash; use Save ratings to keep a copy, or Reset / reload to start fresh.
+  </footer>
+</div>
+
+<script>
+(function(){
+
+  const COLORS = { A: '#2E9E4F', B: '#F0BF2C', C: '#DE4B45', U: '#DEDBCC' };
+  const N_PILLARS = 5;
+  const SWATCHES = ['#7BB9A8', '#C9A15A', '#8FA6C9', '#A98FC9', '#8FBF7B'];
+
+  const DIMENSIONS = [
+    {
+      id: 'acc', label: 'Accessibility', index: 0,
+      questions: [
+        { en: 'The location of the open spaces is highly accessible (accessibility to public transportation, within close proximity to residences, public markets and commercial areas).',
+          tl: 'Ang open spaces sa aming munisipyo/siyudad ay madaling mapuntahan at malapit sa pampublikong transportasyon, pamilihan, at mga tirahan.' },
+        { en: 'Legible environmental signages/notices are available in our community parks and open spaces that guide the users.',
+          tl: 'Mayroong mga malinaw na palatandaan/patalastas sa aming community parks at open spaces na gumagabay sa mga taong gumagamit nito.' },
+        { en: 'Benches, comfort rooms and other usable facilities and amenities are available in our parks and public open spaces.',
+          tl: 'Mayroong mga pasilidad tulad ng mga upuan at malapit na palikuran sa aming parks at open spaces.' },
+        { en: 'There are open spaces allocated for planting native trees and other plants such as medicinal herbs and fruit-bearing trees.',
+          tl: 'Mayroong open spaces sa aming lugar na inilaan para sa pagtatanim ng native trees at iba pang puno at halaman, tulad ng mga halamang gamot at mga namumunga ng mga prutas at gulay.' },
+        { en: 'Parks and open spaces in our locality are accessible to all ages and abilities (children & youth, senior citizens, PWDs), with safe streets and good pedestrian amenities.',
+          tl: 'Madali ma-akses ng lahat edad at kakayahan (mga bata at kabataan, senior citizens, PWDs) ang mga parks at open spaces sa aming lugar.' }
+      ]
+    },
+    {
+      id: 'cea', label: 'Comfort & Aesthetics', index: 1,
+      questions: [
+        { en: 'Open spaces in our locality incorporate green and blue landscapes (native trees, flowers, shrubs, lawns, gardens; and natural water features such as rivers, creeks, ponds).',
+          tl: 'Maganda at kaaya-aya ang mga parks at open spaces sa aming lugar. Mayroon itong mga native na puno at bulaklak at mga katubigan tulad ng sapa, lawa, at iba pa.' },
+        { en: 'Our parks and public open spaces are well-managed and maintained, attracting various users and generating community pride.',
+          tl: 'Mahusay na napapanatili ang kalinisan at kagandahan ng mga parks at open spaces sa aming lugar. Pinagmamalaki ang mga ito ng aming komunidad.' },
+        { en: 'Our parks and open spaces are peaceful and serene, with low ambient noise and buffer trees/planting for noise reduction.',
+          tl: 'Tahimik at payapa ang parks at open spaces sa aming lugar. Malayo ito sa ingay ng mga kalsada at gusali.' },
+        { en: 'Natural shade and cooling are present in the parks and open spaces in our locality.',
+          tl: 'Malilim at presko ang hangin sa mga parks at open spaces sa aming lugar.' },
+        { en: 'There are no visual obstructions from surrounding structures, areas, and land uses.',
+          tl: 'Maaliwalas ang mga parks at open spaces sa aming munisipyo. Walang mga di kaaya-ayang gusali na kalapit ito.' }
+      ]
+    },
+    {
+      id: 'pss', label: 'Public Safety & Security', index: 2,
+      questions: [
+        { en: 'There are measures in place for environmental surveillance to ensure the safety of users of parks and open spaces.',
+          tl: 'Mayroong mga pamamaraan para magsubaybay at siguraduhin ang kaligtasan ng mga taong pumunta sa parks at open spaces sa aming lugar.' },
+        { en: 'It is safe to access and use open spaces at any time of day because streetlights are present in the area.',
+          tl: 'Ligtas ang pumunta at gumamit ng open spaces anumang oras ng araw at gabi dahil mayroong probisyon ng ilaw.' },
+        { en: 'The open space has procedures in place to deter crime, with public security officers or local police present.',
+          tl: 'Mayroong pamamaraan sa mga pampublikong parks at open spaces laban sa krimen. May mga tagabantay dito (tulad ng tanod, guwardya, o pulis) na sumisiguro sa kaligtasan ng mga tao.' },
+        { en: 'The open space has traffic-calming measures for pedestrian safety, with designated parking slots and visible traffic signage.',
+          tl: 'Ang open spaces sa aming lugar ay may mga hakbang iwas trapiko para sa kaligtasan ng mga pedestrian.' },
+        { en: 'The open space is highly accessible to emergency services, such as temporary evacuation and fire assembly areas after disasters.',
+          tl: 'Madaling ma-akses ang parks at open spaces tuwing may sakuna (lindol, bagyo, baha, sunog). Nagagamit din ito bilang temporary evacuation at fire assembly area.' }
+      ]
+    },
+    {
+      id: 'wr', label: 'Wellness & Recreation', index: 3,
+      questions: [
+        { en: 'Parks and open spaces in our locality provide access to the natural environment.',
+          tl: 'Nagbibigay ng akses sa likas na kapaligiran ang parks at open spaces sa aming lugar.' },
+        { en: 'There are community parks, gardens, vegetation areas, and other types of public open spaces in our locality.',
+          tl: 'Mayroong community parks, gardens, at pampublikong open spaces sa aming munisipyo/siyudad.' },
+        { en: 'Recreational and sports facilities and equipment (playgrounds, wellness facilities) are present, encouraging social interaction and healthy lifestyles.',
+          tl: "Ang parks at open spaces sa aming lugar ay may mga palaruan, pasilidad at kagamitan pang ehersisyo at isports. Nagsisilbi ding lugar ito para sa iba't ibang libangan para sa ugnayan at pagsulong ng isang malusog na komunidad." },
+        { en: 'Bike lanes and walking paths for cyclists and pedestrians are integrated with public open spaces and community parks.',
+          tl: 'Mayroong mga lakaran at pasilidad para sa mga pedestrian at siklista.' },
+        { en: 'The public open spaces in our locality have multiple uses and can host community events such as trade fairs, bazaars, and celebrations.',
+          tl: 'Ang mga parks at open spaces sa aming lugar ay nagagamit para sa mga aktibidad at kaganapang pang-komunidad.' }
+      ]
+    },
+    {
+      id: 'ntb', label: 'Native Trees & Biodiversity', index: 4,
+      questions: [
+        { en: 'Native tree species (indigenous to the locality) are prioritized in planting programs within open spaces, rather than exotic or purely ornamental species.',
+          tl: 'Ang mga katutubong (native) na puno ay inuuna sa mga planting program sa aming open spaces, kaysa sa mga banyagang species.' },
+        { en: 'There is a monitoring and maintenance system in place to ensure the survival and growth of planted native trees (e.g. watering schedules, replacement of dead seedlings, pest control).',
+          tl: 'Mayroong sistema ng pagsubaybay at pangangalaga upang matiyak ang paglago ng mga itinanim na puno, tulad ng regular na pagdilig at pagpapalit ng mga namatay na punla.' },
+        { en: 'Open spaces support biodiversity by serving as habitat corridors connected to other green areas, water bodies, or forest patches in the locality.',
+          tl: "Ang mga open spaces ay tumutulong sa biodiversity sa pamamagitan ng pagkonekta sa ibang berdeng lugar, katubigan, o gubat sa aming lokalidad." },
+        { en: 'There are local policies or ordinances that protect existing mature or heritage trees and regulate tree-cutting or land conversion within open spaces.',
+          tl: 'Mayroong lokal na patakaran o ordinansa na nagpoprotekta sa mga matatandang puno at nagbabawal sa hindi pinahintulutang pagputol ng puno.' },
+        { en: 'The community and local institutions (schools, barangays, civic groups) are actively engaged in tree-planting, tree adoption, or stewardship programs for native trees.',
+          tl: 'Ang komunidad at lokal na institusyon (paaralan, barangay, civic groups) ay aktibong lahok sa mga programa ng pagtatanim at pag-aalaga ng katutubong puno.' }
+      ]
+    }
+  ];
+
+  // ---- state ----
+  const state = {};
+  DIMENSIONS.forEach(d => { state[d.id] = new Array(5).fill(null); });
+
+  // ---- SVG geometry: N points evenly spaced around a center, wedges + rings ----
+  const CENTER = [310, 310];
+  const R = 190;        // radius to each pillar vertex
+  const LABEL_R = 255;  // radius for dimension labels
+
+  function toRad(deg){ return deg * Math.PI / 180; }
+  function vertexPoint(i){
+    const angle = toRad(-90 + i * (360 / N_PILLARS));
+    return [ CENTER[0] + R * Math.cos(angle), CENTER[1] + R * Math.sin(angle) ];
+  }
+  const VERTS = Array.from({length: N_PILLARS}, (_, i) => vertexPoint(i));
+
+  function lerpPoint(from, to, t){
+    return [ from[0] + (to[0]-from[0])*t, from[1] + (to[1]-from[1])*t ];
+  }
+  function pointsToStr(pts){
+    return pts.map(p => p[0].toFixed(2)+','+p[1].toFixed(2)).join(' ');
+  }
+
+  function ringPolygon(pA, pB, k){
+    // k = 1 (outer) .. 5 (inner, touches center)
+    const so = (6-k)/5;
+    const si = (5-k)/5;
+    const p1 = lerpPoint(CENTER, pA, si);
+    const p2 = lerpPoint(CENTER, pA, so);
+    const p3 = lerpPoint(CENTER, pB, so);
+    const p4 = lerpPoint(CENTER, pB, si);
+    return [p1,p2,p3,p4];
+  }
+
+  function ringNumberPos(pA, pB, k){
+    const so = (6-k)/5, si = (5-k)/5;
+    const t = (so+si)/2;
+    const mid = lerpPoint(pA, pB, 0.5);
+    return lerpPoint(CENTER, mid, t);
+  }
+
+  function labelPos(dimIndex){
+    const angle = toRad(-90 + (dimIndex + 0.5) * (360 / N_PILLARS));
+    return [ CENTER[0] + LABEL_R * Math.cos(angle), CENTER[1] + LABEL_R * Math.sin(angle) ];
+  }
+
+  function svgEl(name, attrs){
+    const el = document.createElementNS('http://www.w3.org/2000/svg', name);
+    for(const k in attrs) el.setAttribute(k, attrs[k]);
+    return el;
+  }
+
+  const svg = document.getElementById('diagramSvg');
+
+  function buildDiagram(){
+    svg.innerHTML = '';
+
+    // background pentagon (unrated)
+    svg.appendChild(svgEl('polygon', { points: pointsToStr(VERTS), fill: COLORS.U }));
+
+    // ring polygons for each dimension/pillar
+    DIMENSIONS.forEach(dim => {
+      const pA = VERTS[dim.index];
+      const pB = VERTS[(dim.index+1) % N_PILLARS];
+      for(let k=1;k<=5;k++){
+        const pts = ringPolygon(pA, pB, k);
+        const poly = svgEl('polygon', {
+          points: pointsToStr(pts),
+          fill: COLORS.U,
+          stroke: '#ffffff',
+          'stroke-width': 1.5,
+          id: 'poly-'+dim.id+'-'+k
+        });
+        svg.appendChild(poly);
+      }
+    });
+
+    // ring numbers
+    DIMENSIONS.forEach(dim => {
+      const pA = VERTS[dim.index];
+      const pB = VERTS[(dim.index+1) % N_PILLARS];
+      for(let k=1;k<=5;k++){
+        const p = ringNumberPos(pA, pB, k);
+        const t = svgEl('text', {
+          x:p[0], y:p[1]+4, 'text-anchor':'middle',
+          'font-size':'12', 'font-weight':'700', fill:'#1E2A22', 'font-family':'inherit'
+        });
+        t.textContent = k;
+        svg.appendChild(t);
+      }
+    });
+
+    // spokes from center to each vertex
+    VERTS.forEach(v => {
+      svg.appendChild(svgEl('line', {
+        x1: CENTER[0], y1: CENTER[1], x2: v[0], y2: v[1],
+        stroke:'#111', 'stroke-width':4
+      }));
+    });
+
+    // outer pentagon border
+    svg.appendChild(svgEl('polygon', {
+      points: pointsToStr(VERTS), fill:'none', stroke:'#111', 'stroke-width':5
+    }));
+
+    // dimension labels around the outside
+    DIMENSIONS.forEach(dim => {
+      const p = labelPos(dim.index);
+      const t = svgEl('text', {
+        x:p[0], y:p[1], 'text-anchor':'middle',
+        'font-size':'13', 'font-weight':'800', fill:'#123D28',
+        'letter-spacing':'0.02em'
+      });
+      const words = dim.label.toUpperCase().split(' ');
+      words.forEach((w, i) => {
+        const tspan = svgEl('tspan', { x:p[0], dy: i===0 ? 0 : 14 });
+        tspan.textContent = w;
+        t.appendChild(tspan);
+      });
+      svg.appendChild(t);
+    });
+  }
+
+  function updateDiagram(){
+    DIMENSIONS.forEach(dim => {
+      for(let k=1;k<=5;k++){
+        const val = state[dim.id][k-1];
+        const color = val ? COLORS[val] : COLORS.U;
+        const poly = document.getElementById('poly-'+dim.id+'-'+k);
+        if(poly) poly.setAttribute('fill', color);
+      }
+    });
+    updateScoreSummary();
+  }
+
+  function updateScoreSummary(){
+    const root = document.getElementById('scoreSummary');
+    root.innerHTML = '';
+    DIMENSIONS.forEach(dim => {
+      const counts = { A:0, B:0, C:0, U:0 };
+      state[dim.id].forEach(v => { counts[v||'U']++; });
+      const row = document.createElement('div');
+      row.className = 'score-row';
+      const bar = ['A','B','C','U'].map(k => counts[k] ? '<span style="width:'+(counts[k]/5*100)+'%;background:'+COLORS[k]+'"></span>' : '').join('');
+      row.innerHTML = '<span class="dim-name">'+dim.label+'</span><div class="score-bar">'+bar+'</div>';
+      root.appendChild(row);
+    });
+  }
+
+  // ---- controls ----
+  const dimensionsRoot = document.getElementById('dimensionsRoot');
+
+  function buildControls(){
+    dimensionsRoot.innerHTML = '';
+    DIMENSIONS.forEach((dim, dimIdx) => {
+      const section = document.createElement('section');
+      section.className = 'dimension';
+
+      const header = document.createElement('div');
+      header.className = 'dim-header';
+      header.innerHTML = '<span class="swatch" style="background:'+SWATCHES[dimIdx % SWATCHES.length]+'"></span>' +
+        '<h2>'+dim.label+'</h2><span class="dim-side">Pillar '+(dimIdx+1)+' of '+DIMENSIONS.length+'</span>';
+      section.appendChild(header);
+
+      dim.questions.forEach((q, idx) => {
+        const row = document.createElement('div');
+        row.className = 'question';
+
+        const qText = document.createElement('div');
+        qText.className = 'q-text';
+        qText.innerHTML = '<span class="num">'+(idx+1)+'.</span>' + escapeHtml(q.en) +
+          '<span class="tl">'+escapeHtml(q.tl)+'</span>';
+        row.appendChild(qText);
+
+        const toggle = document.createElement('div');
+        toggle.className = 'toggle';
+        ['A','B','C'].forEach(letter => {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.textContent = letter;
+          btn.addEventListener('click', () => {
+            state[dim.id][idx] = (state[dim.id][idx] === letter) ? null : letter;
+            refreshToggle(toggle, state[dim.id][idx]);
+            updateDiagram();
+          });
+          toggle.appendChild(btn);
+        });
+        row.appendChild(toggle);
+        section.appendChild(row);
+      });
+
+      dimensionsRoot.appendChild(section);
+    });
+  }
+
+  function refreshToggle(toggleEl, selected){
+    Array.from(toggleEl.children).forEach(btn => {
+      btn.className = '';
+      if(btn.textContent === selected) btn.className = 'sel-'+selected;
+    });
+  }
+
+  function escapeHtml(str){
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  function slugify(str){
+    return (str||'audit').toLowerCase().trim().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'') || 'audit';
+  }
+
+  document.getElementById('resetBtn').addEventListener('click', () => {
+    DIMENSIONS.forEach(d => { state[d.id] = new Array(5).fill(null); });
+    document.querySelectorAll('.toggle').forEach(t => refreshToggle(t, null));
+    updateDiagram();
+  });
+
+  document.getElementById('saveBtn').addEventListener('click', () => {
+    const payload = {
+      tool: 'open-spaces-audit-tool-5-pillars',
+      version: 1,
+      lgu: document.getElementById('lguName').value || '',
+      savedAt: new Date().toISOString(),
+      ratings: state
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = slugify(payload.lgu) + '-audit-ratings.json';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  });
+
+  document.getElementById('loadBtn').addEventListener('click', () => {
+    document.getElementById('loadFile').click();
+  });
+
+  document.getElementById('loadFile').addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      try{
+        const data = JSON.parse(ev.target.result);
+        if(!data.ratings) throw new Error('This file has no ratings in it.');
+        DIMENSIONS.forEach(d => {
+          const loaded = data.ratings[d.id];
+          state[d.id] = (Array.isArray(loaded) && loaded.length === 5) ? loaded.slice() : new Array(5).fill(null);
+        });
+        if(typeof data.lgu === 'string') document.getElementById('lguName').value = data.lgu;
+        document.querySelectorAll('.dimension').forEach((section, dIdx) => {
+          const dim = DIMENSIONS[dIdx];
+          section.querySelectorAll('.toggle').forEach((toggleEl, qIdx) => {
+            refreshToggle(toggleEl, state[dim.id][qIdx]);
+          });
+        });
+        updateDiagram();
+      }catch(err){
+        alert('Could not load this file: ' + err.message);
+      }
+      e.target.value = '';
+    };
+    reader.readAsText(file);
+  });
+
+  document.getElementById('downloadImgBtn').addEventListener('click', () => {
+    const svgData = new XMLSerializer().serializeToString(svg);
+    const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+    const url = URL.createObjectURL(svgBlob);
+    const img = new Image();
+    img.onload = () => {
+      const scale = 2;
+      const canvas = document.createElement('canvas');
+      canvas.width = 620 * scale;
+      canvas.height = 620 * scale;
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      URL.revokeObjectURL(url);
+      canvas.toBlob((blob) => {
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = slugify(document.getElementById('lguName').value) + '-audit-diagram.png';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+      });
+    };
+    img.src = url;
+  });
+
+  buildDiagram();
+  buildControls();
+  updateDiagram();
+
+})();
+</script>
+</body>
+</html>
