@@ -638,7 +638,7 @@
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = toFileName(payload.lgu) + '_audit_ratings.json';
+    a.download = toFileName(payload.lgu) + '_audit_scale.json';
     document.body.appendChild(a);
     a.click();
     a.remove();
