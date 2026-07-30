@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Open Spaces &amp; Native Trees Planning Audit Tool</title>
+<title>SDG 5Ps Audit Tool</title>
 <style>
   :root{
     --paper: #F6F4EC;
@@ -249,23 +249,23 @@
   <header class="top">
     <div>
       <p class="brand-eyebrow">Quezon City Planning and Development Department &middot; Special Projects Division</p>
-      <h1>Open Spaces Audit Tool &mdash; 5 Pillars</h1>
+      <h1>SDG 5Ps Audit Tool</h1>
       <p class="subtitle">Rate each of the 25 criteria A / B / C below. The pentagon diagram on the left fills in green, yellow, or red in real time as you go.</p>
     </div>
     <div class="lgu-field">
-      <label for="lguName">Name of LGU / Agency</label>
-      <input id="lguName" type="text" placeholder="e.g. Quezon City" />
+      <label for="lguName">Name of Division</label>
+      <!-- <input id="lguName" type="text" placeholder="e.g. Quezon City" /> -->
     </div>
   </header>
 
   <div class="toolbar">
-    <span class="hint">A = in place &nbsp;&bull;&nbsp; B = in the pipeline &nbsp;&bull;&nbsp; C = not in place</span>
+    <!-- <span class="hint">A = in place &nbsp;&bull;&nbsp; B = in the pipeline &nbsp;&bull;&nbsp; C = not in place</span> -->
     <div style="display:flex; gap:8px; flex-wrap:wrap;">
-      <button class="reset-btn" id="saveBtn">Save ratings</button>
-      <button class="reset-btn" id="loadBtn">Upload ratings</button>
+      <button class="reset-btn" id="saveBtn">Download flle</button>
+      <button class="reset-btn" id="loadBtn">Upload existing file</button>
       <input type="file" id="loadFile" accept="application/json" style="display:none" />
-      <button class="reset-btn" id="downloadImgBtn">Download diagram (PNG)</button>
-      <button class="reset-btn" id="resetBtn">Reset all ratings</button>
+      <button class="reset-btn" id="downloadImgBtn">Download the diagram (PNG)</button>
+      <button class="reset-btn" id="resetBtn">Reset</button>
     </div>
   </div>
 
@@ -275,9 +275,9 @@
         <svg id="diagramSvg" viewBox="0 0 620 620" xmlns="http://www.w3.org/2000/svg"></svg>
       </div>
       <div class="legend">
-        <div class="legend-item"><span class="legend-swatch" style="background:var(--green)"></span>A &mdash; in place</div>
-        <div class="legend-item"><span class="legend-swatch" style="background:var(--yellow)"></span>B &mdash; pipeline</div>
-        <div class="legend-item"><span class="legend-swatch" style="background:var(--red)"></span>C &mdash; not in place</div>
+        <div class="legend-item"><span class="legend-swatch" style="background:var(--green)"></span>A &mdash; Progressing</div>
+        <div class="legend-item"><span class="legend-swatch" style="background:var(--yellow)"></span>B &mdash; Stagnating</div>
+        <div class="legend-item"><span class="legend-swatch" style="background:var(--red)"></span>C &mdash; Regressing</div>
         <div class="legend-item"><span class="legend-swatch" style="background:var(--unrated)"></span>Unrated</div>
       </div>
       <div class="score-summary" id="scoreSummary"></div>
@@ -300,10 +300,9 @@
 
   const DIMENSIONS = [
     {
-      id: 'acc', label: 'Accessibility', index: 0,
+      id: 'acc', label: 'Pillar 1: PEOPLE', index: 0,
       questions: [
-        { en: 'The location of the open spaces is highly accessible (accessibility to public transportation, within close proximity to residences, public markets and commercial areas).',
-          tl: 'Ang open spaces sa aming munisipyo/siyudad ay madaling mapuntahan at malapit sa pampublikong transportasyon, pamilihan, at mga tirahan.' },
+        { en: 'Expanding social protection coverage, reducing multi-dimensional poverty, and strengthening economic support systems for poor and vulnerable households.'},
         { en: 'Legible environmental signages/notices are available in our community parks and open spaces that guide the users.',
           tl: 'Mayroong mga malinaw na palatandaan/patalastas sa aming community parks at open spaces na gumagabay sa mga taong gumagamit nito.' },
         { en: 'Benches, comfort rooms and other usable facilities and amenities are available in our parks and public open spaces.',
