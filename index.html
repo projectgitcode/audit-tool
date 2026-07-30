@@ -216,11 +216,48 @@
   .toggle button.sel-C{ background:var(--red); color:var(--red-ink); }
 
   .toolbar{
-    display:flex; justify-content:space-between; align-items:center;
     margin:4px 0 18px;
-    flex-wrap:wrap; gap:10px;
+    background:#fff;
+    border:1.5px solid var(--line);
+    border-radius:var(--radius);
+    padding:18px 20px;
   }
-  .toolbar .hint{ font-size:12.5px; color:var(--ink-soft); }
+  .instructions{
+    font-size:13.5px;
+    color:var(--ink);
+  }
+  .instr-title{
+    font-weight:800;
+    font-size:15px;
+    margin:0 0 10px;
+    color:var(--forest-deep);
+  }
+  .instr-body{
+    margin:0 0 12px;
+    color:var(--ink);
+    line-height:1.55;
+  }
+  .instr-body strong{ color:var(--forest-deep); }
+  .instr-scale{
+    margin:0;
+    padding-left:20px;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+  }
+  .instr-scale li{
+    line-height:1.55;
+  }
+  .instr-scale strong{ color:var(--forest-deep); }
+  .toolbar-actions{
+    display:flex;
+    justify-content:flex-end;
+    gap:8px;
+    flex-wrap:wrap;
+    margin-top:16px;
+    padding-top:16px;
+    border-top:1px solid var(--line);
+  }
   .reset-btn{
     background:none;
     border:1.5px solid var(--forest);
@@ -261,13 +298,16 @@
   </header>
 
   <div class="toolbar">
-    <span class="hint">The Tool covers the five (5) pillars of Sustainable Development: People, Planet, Prosperity, Peace, and Partnerships. Each dimension contains five (5) benchmark criteria/considerations aligned with local 
-      implementation strategies. Evaluators should assess the trend/trajectory of each criterion over time within their barangay, district, or city sector using this scale: 
-      A: Progressing — Measurable improvement is being made, initiatives are generating positive impact, and indicators are moving toward target completion
-B: Stagnating — Little to no measurable change from the baseline; initiatives are stalled, stuck in the pipeline, or failing to keep pace with growth
-C: Regressing — Conditions or indicators have deteriorated relative to previous baselines, requiring urgent policy intervention or reallocated funding
-</span>
-    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+    <div class="instructions">
+      <p class="instr-title">Instructions</p>
+      <p class="instr-body">The Tool covers the <strong>five (5) pillars</strong> of Sustainable Development: <strong>People, Planet, Prosperity, Peace, and Partnerships.</strong> Each dimension contains <strong>five (5) benchmark criteria/considerations</strong> aligned with local implementation strategies. Evaluators should assess the trend/trajectory of each criterion over time within their barangay, district, or city sector using this scale:</p>
+      <ul class="instr-scale">
+        <li><strong>A: Progressing</strong> — <strong>Measurable improvement</strong> is being made, initiatives are generating positive impact, and indicators are moving toward target completion</li>
+        <li><strong>B: Stagnating</strong> — <strong>Little to no measurable change from the baseline</strong>; initiatives are stalled, stuck in the pipeline, or failing to keep pace with growth</li>
+        <li><strong>C: Regressing</strong> — <strong>Conditions or indicators have deteriorated</strong> relative to previous baselines, requiring urgent policy intervention or reallocated funding</li>
+      </ul>
+    </div>
+    <div class="toolbar-actions">
       <button class="reset-btn" id="saveBtn">Download flle</button>
       <button class="reset-btn" id="loadBtn">Upload existing file</button>
       <input type="file" id="loadFile" accept="application/json" style="display:none" />
