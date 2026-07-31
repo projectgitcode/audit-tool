@@ -352,7 +352,7 @@
   const SWATCHES = ['#7BB9A8', '#C9A15A', '#8FA6C9', '#A98FC9', '#8FBF7B'];
   const LABELS = { A: 'Progressing', B: 'Stagnating', C: 'Regressing', U: 'Unrated' };
 
-  const DIMENSIONS = [
+    const DIMENSIONS = [
     {
       id: 'acc', label: 'PEOPLE', index: 0,
       questions: [
@@ -404,7 +404,6 @@
       ]
     }
   ];
-
   // ---- state ----
   const state = {};
   DIMENSIONS.forEach(d => { state[d.id] = new Array(5).fill(null); });
