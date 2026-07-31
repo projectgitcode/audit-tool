@@ -334,6 +334,7 @@
     <button class="reset-btn" id="loadBtn">Upload existing file</button>
     <input type="file" id="loadFile" accept="application/json" style="display:none" />
     <button class="reset-btn" id="downloadImgBtn">Download the diagram (PNG)</button>
+    <button class="reset-btn" id="downloadPdfBtn">Download report (PDF)</button>
     <button class="reset-btn" id="resetBtn">Reset</button>
   </div>
 
@@ -342,12 +343,14 @@
   </footer>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
 (function(){
 
   const COLORS = { A: '#2E9E4F', B: '#F0BF2C', C: '#DE4B45', U: '#DEDBCC' };
   const N_PILLARS = 5;
   const SWATCHES = ['#7BB9A8', '#C9A15A', '#8FA6C9', '#A98FC9', '#8FBF7B'];
+  const LABELS = { A: 'Progressing', B: 'Stagnating', C: 'Regressing', U: 'Unrated' };
 
   const DIMENSIONS = [
     {
@@ -679,30 +682,133 @@
   });
 
   document.getElementById('downloadImgBtn').addEventListener('click', () => {
+    const divisionName = (document.getElementById('lguName').value || '').trim();
     const svgData = new XMLSerializer().serializeToString(svg);
     const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
     const url = URL.createObjectURL(svgBlob);
     const img = new Image();
     img.onload = () => {
       const scale = 2;
+      const titleSpace = divisionName ? 56 : 0; // reserved header area for the name
       const canvas = document.createElement('canvas');
       canvas.width = 620 * scale;
-      canvas.height = 620 * scale;
+      canvas.height = (620 + titleSpace) * scale;
       const ctx = canvas.getContext('2d');
       ctx.fillStyle = '#ffffff';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+      if(divisionName){
+        const titleText = 'Name of Division/Group: ' + divisionName;
+        const maxTextWidth = canvas.width - 32 * scale;
+        let fontSize = 20 * scale;
+        ctx.fillStyle = '#123D28';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.font = 'bold ' + fontSize + 'px -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif';
+        while(ctx.measureText(titleText).width > maxTextWidth && fontSize > 10 * scale){
+          fontSize -= 1 * scale;
+          ctx.font = 'bold ' + fontSize + 'px -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif';
+        }
+        ctx.fillText(titleText, canvas.width / 2, (titleSpace / 2) * scale);
+      }
+
+      ctx.drawImage(img, 0, titleSpace * scale, canvas.width, 620 * scale);
       URL.revokeObjectURL(url);
       canvas.toBlob((blob) => {
         const a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
-        a.download = toFileName(document.getElementById('lguName').value) + '_audit_diagram.png';
+        a.download = toFileName(divisionName) + '_audit_diagram.png';
         document.body.appendChild(a);
         a.click();
         a.remove();
       });
     };
     img.src = url;
+  });
+
+  document.getElementById('downloadPdfBtn').addEventListener('click', () => {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+    const pageW = doc.internal.pageSize.getWidth();
+    const pageH = doc.internal.pageSize.getHeight();
+    const marginX = 48;
+    let y = 56;
+
+    const divisionName = (document.getElementById('lguName').value || '').trim();
+
+    function ensureSpace(needed){
+      if(y + needed > pageH - 48){
+        doc.addPage();
+        y = 56;
+      }
+    }
+
+    // Title
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(16);
+    doc.setTextColor(18, 61, 40);
+    doc.text('SDG 5Ps Audit Tool — Report', marginX, y);
+    y += 20;
+
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(11);
+    doc.setTextColor(75, 90, 79);
+    doc.text('Division/Group: ' + (divisionName || '(not specified)'), marginX, y);
+    y += 14;
+    doc.text('Generated: ' + new Date().toLocaleDateString('en-PH', { year:'numeric', month:'long', day:'numeric' }), marginX, y);
+    y += 24;
+
+    const rgb = {
+      A: [46, 158, 79],
+      B: [240, 191, 44],
+      C: [222, 75, 69],
+      U: [222, 219, 204]
+    };
+
+    DIMENSIONS.forEach((dim, dimIdx) => {
+      ensureSpace(40);
+      // Pillar header band
+      doc.setFillColor(18, 61, 40);
+      doc.rect(marginX, y, pageW - marginX*2, 22, 'F');
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(11);
+      doc.setTextColor(255,255,255);
+      doc.text('PILLAR ' + (dimIdx+1) + ' — ' + dim.label, marginX + 8, y + 15);
+      y += 22 + 10;
+
+      dim.questions.forEach((q, idx) => {
+        const rating = state[dim.id][idx] || 'U';
+        const label = LABELS[rating];
+        const col = rgb[rating];
+
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(9.5);
+        doc.setTextColor(30, 42, 34);
+        const textWidth = pageW - marginX*2 - 90;
+        const lines = doc.splitTextToSize((idx+1) + '. ' + q.en, textWidth);
+        const blockHeight = Math.max(lines.length * 12, 16) + 8;
+
+        ensureSpace(blockHeight);
+
+        doc.text(lines, marginX, y + 10);
+
+        // rating chip
+        doc.setFillColor(col[0], col[1], col[2]);
+        const chipW = 78;
+        const chipX = marginX + textWidth + 12;
+        doc.roundedRect(chipX, y, chipW, 16, 3, 3, 'F');
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(8.5);
+        doc.setTextColor(rating === 'B' ? 58 : 255, rating === 'B' ? 46 : 255, rating === 'B' ? 5 : 255);
+        doc.text(rating + ' — ' + label, chipX + chipW/2, y + 11, { align: 'center' });
+
+        y += blockHeight + 4;
+      });
+
+      y += 8;
+    });
+
+    doc.save(toFileName(divisionName) + '_audit_report.pdf');
   });
 
   buildDiagram();
